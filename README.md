@@ -11,12 +11,13 @@ cd $UG4_ROOT
 ughub install PybindForUG4
 ```
 
-2) Switch to the directory ``externals/PybindForUG4``. Install via:
+2) The next step is to fetch and to update the submodules:
 
 ```
-git submodule init
-git submodule update
+ughub git submodule init --- PybindForUG4
+ughub git submodule update --- PybindForUG4 
 ```
+Note that specifying ``--- PybindForUG4`` is optional.
 
 3) Now you have external libraries installed. Configure UG4 with CMakeFlags '-DUSE_PYBIND11=ON' and recompile:
 
