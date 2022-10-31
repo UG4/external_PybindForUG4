@@ -4,9 +4,14 @@ Third party tools for pybind11. Consult license in subdirectory for details.
 
 This part is experimental! To install this software:
 
-1) Install via ughub. This creates externals/PybindForUG4
+1) Install via ughub. This will create ``externals/PybindForUG4``
 
-2) Go to ``externals/PybindForUG4``. Install via:
+```
+cd $UG4_ROOT
+ughub install PybindForUG4
+```
+
+2) Switch to the directory ``externals/PybindForUG4``. Install via:
 
 ```
 git submodule init
