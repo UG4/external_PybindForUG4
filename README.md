@@ -26,3 +26,9 @@ cmake -DUSE_PYBIND11=ON -DCMAKE_POLICY_DEFAULT_CMP0057=NEW
 ```
 (Note: Setting the policy is only required on newer cmake versions).
 
+4) Finally, you can execute a small demo as follows:
+```
+cd $UG4_ROOT/externals/PybindForUG4
+python3 src/ug4demo.py
+```
+
