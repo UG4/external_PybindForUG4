@@ -1,4 +1,7 @@
 # Import os module
+#import time
+#time.sleep(30) # for debugging
+
 import os
 env_ug4_root = os.environ['UG4_ROOT']
 
@@ -41,8 +44,8 @@ elemDiscLip.set_diffusion(KDcor)
 elemDiscLip.set_mass_scale(KCor)
 
 dirichletBND = ug4.DirichletBoundary2dCPU1()
-dirichletBND.add(1.0, "c", "TOP_SC")
-dirichletBND.add(0.0, "c", "BOTTOM_SC")
+dirichletBND.add(1.0, "u", "TOP_SC")
+dirichletBND.add(0.0, "u", "BOTTOM_SC")
 
 domainDisc = ug4.DomainDiscretization2dCPU1(approxSpace)
 domainDisc.add(elemDiscCor)
@@ -52,10 +55,11 @@ domainDisc.add(dirichletBND)
 
 
 ilu=ug4.ILUCPU1()
-#lsolver=ug4.LinearSolverCPU1()
-#lsolver.set_preconditioner(ilu)
+lsolver=ug4.LinearSolverCPU1()
+lsolver.set_preconditioner(ilu)
 
-lsolver=ug4.LUCPU1()
+# lsolver=ug4.LUCPU1()
+
 
 usol = ug4.GridFunction2dCPU1(approxSpace)
 ug4.Interpolate(0.0, usol, "u")
@@ -64,14 +68,32 @@ startTime = 0.0
 endTime = 10.0
 dt=0.25
 
+print(issubclass(ug4.LUCPU1,ug4.ILinearOperatorInverseCPU1))
+print(isinstance(lsolver,ug4.LUCPU1))
+print(isinstance(lsolver,ug4.ILinearOperatorInverseCPU1))
+
+print(lsolver)
+print(lsolver.__class__)
+print(lsolver.name())
+print(lsolver.config_string())
+print(super(ug4.LUCPU1))
 
 timeDisc=ug4.ThetaTimeStepCPU1(domainDisc, 1.0)
 
 timeInt = limex.LinearTimeIntegrator2dCPU1(timeDisc)
+#timeInt = limex.ConstStepLinearTimeIntegrator2dCPU1(timeDisc)
 timeInt.set_linear_solver(lsolver)
-timeInt.set_time_step(0.25)
+timeInt.set_time_step(dt)
 
-timeInt.apply(usol, endTime, usol, startTime)
+try:
+    timeInt.apply(usol, endTime, usol, startTime)
+except Exception as inst:
+    print(type(inst))    # the exception instance
+   # print(inst.args)     # arguments stored in .args
+    print(inst)          # __str__ allows args to be printed directly,
+                         # but may be overridden in exception subclasses
+    
+
 
 # nstages = 2
 # limex = limex.LimexTimeIntegrator2dCPU1(nstages)
