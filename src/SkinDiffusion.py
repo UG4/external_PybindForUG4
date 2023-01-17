@@ -30,26 +30,26 @@ approxSpace.init_surfaces()
 approxSpace.init_top_surface()
 approxSpace.print_statistic()
 
-
 # Create discretization.
 KDcor=1.0
 KCor=1.0
 
-elemDiscCor = cd.ConvectionDiffusionFV12d("u", "COR")
-elemDiscCor.set_diffusion(KDcor)
-elemDiscCor.set_mass_scale(KCor)
+elemDisc={}
+elemDisc["COR"] = cd.ConvectionDiffusionFV12d("u", "COR")
+elemDisc["COR"].set_diffusion(KDcor)
+elemDisc["COR"].set_mass_scale(KCor)
 
-elemDiscLip = cd.ConvectionDiffusionFV12d("u", "LIP")
-elemDiscLip.set_diffusion(KDcor)
-elemDiscLip.set_mass_scale(KCor)
+elemDisc["LIP"] = cd.ConvectionDiffusionFV12d("u", "LIP")
+elemDisc["LIP"].set_diffusion(KDcor)
+elemDisc["LIP"].set_mass_scale(KCor)
 
 dirichletBND = ug4.DirichletBoundary2dCPU1()
 dirichletBND.add(1.0, "u", "TOP_SC")
 dirichletBND.add(0.0, "u", "BOTTOM_SC")
 
 domainDisc = ug4.DomainDiscretization2dCPU1(approxSpace)
-domainDisc.add(elemDiscCor)
-domainDisc.add(elemDiscLip)
+domainDisc.add(elemDisc["COR"])
+domainDisc.add(elemDisc["LIP"])
 domainDisc.add(dirichletBND)
 
 
@@ -58,7 +58,7 @@ ilu=ug4.ILUCPU1()
 lsolver=ug4.LinearSolverCPU1()
 lsolver.set_preconditioner(ilu)
 
-# lsolver=ug4.LUCPU1()
+lsolver=ug4.LUCPU1()
 
 
 usol = ug4.GridFunction2dCPU1(approxSpace)
@@ -88,13 +88,12 @@ timeInt.set_time_step(dt)
 try:
     timeInt.apply(usol, endTime, usol, startTime)
 except Exception as inst:
-    print(type(inst))    # the exception instance
-   # print(inst.args)     # arguments stored in .args
-    print(inst)          # __str__ allows args to be printed directly,
-                         # but may be overridden in exception subclasses
+    print(inst)
     
 
-
-# nstages = 2
-# limex = limex.LimexTimeIntegrator2dCPU1(nstages)
-
+###
+# TODO: Demonstrator for LIMEX.
+#nstages = 2
+#limex = limex.LimexTimeIntegrator2dCPU1(nstages)
+#print(limex)
+###
